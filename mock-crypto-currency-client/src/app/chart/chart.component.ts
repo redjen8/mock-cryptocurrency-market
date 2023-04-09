@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { bb, Chart, bar } from 'billboard.js';
+import { bb, Chart, line } from 'billboard.js';
 import { CryptoLiveInfo } from '../crypt-live-info';
 import { Observable } from 'rxjs';
 
@@ -11,12 +11,37 @@ import { Observable } from 'rxjs';
 export class ChartComponent implements OnInit {
 
   chart!: Chart;
+  columnData = [
+    [""],
+    [""]
+  ];
+
 
   ngOnInit(): void {
       console.log('init chart!');
+      const MAX_CHART_CNT = 20;
       this.initChart();
       this.connectEventSource('/api/crypto/live')
-        .subscribe(console.log);
+        .subscribe((messageEvent) => {
+          const event = new CryptoLiveInfo(JSON.parse(messageEvent.data));
+          // console.log(event);
+          this.columnData[0].push(event.createdAt.toISOString());
+          this.columnData[1].push(event.currentPrice.toString());
+          if(this.columnData[0].length > MAX_CHART_CNT) {
+            this.columnData[0].shift();
+            this.columnData[1].shift();
+          }
+          console.log(this.columnData);
+          this.chart.load({
+            columns: [
+              ["createdAt"].concat(this.columnData[0]),
+              ["value"].concat(this.columnData[1])
+            ],
+            done: function() {
+              console.log('done!');
+            }
+          })
+        });
   }
 
   connectEventSource(url: string): Observable<MessageEvent> {
@@ -38,10 +63,20 @@ export class ChartComponent implements OnInit {
     this.chart = bb.generate({
       bindto: "#chart",
       data: {
-        type: bar(),
+        type: line(),
+        x: 'createdAt',
         columns: [
-          ["data1", 30, 100, 200, 400, 150, 250]
+          ["createdAt"].concat(this.columnData[0]),
+          ["value"].concat(this.columnData[1])
         ]
+      },
+      axis: {
+        x: {
+          type: 'timeseries',
+          tick: {
+            format: '%Y.%m.%d %H:%M:%S'
+          }
+        }
       },
     })
   }
