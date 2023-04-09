@@ -3,6 +3,9 @@ package com.redjen.mockcryptocurrencyserver.controller;
 import java.time.Duration;
 import java.time.Instant;
 
+import com.redjen.mockcryptocurrencyserver.service.RandomService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,14 +16,20 @@ import reactor.core.publisher.Flux;
 @RestController
 public class CryptoDataController {
 
+    private final RandomService randomService;
+
+    CryptoDataController(RandomService randomService) {
+        this.randomService = randomService;
+    }
+
     @GetMapping(value="/crypto/live", produces = "text/event-stream")
     public Flux<ServerSentEvent<LiveCryptoDataDto>> getLiveCryptoData() {
         return Flux.interval(Duration.ofSeconds(1))
             .map(interval -> ServerSentEvent.<LiveCryptoDataDto>builder()
                 .id(String.valueOf(interval))
                 .data(LiveCryptoDataDto.builder()
-                    .name("test coin")
-                    .currentPrice(interval.doubleValue())
+                    .code("TST")
+                    .currentPrice(randomService.getNextRandomValue())
                     .createdAt(Instant.now().getEpochSecond())
                     .build())
                 .build()

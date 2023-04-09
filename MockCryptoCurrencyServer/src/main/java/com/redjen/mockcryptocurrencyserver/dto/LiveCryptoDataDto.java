@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class LiveCryptoDataDto {
     private String code;
-    private String name;
     private Double currentPrice;
     private Long createdAt;
 }
