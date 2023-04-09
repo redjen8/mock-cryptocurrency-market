@@ -13,14 +13,13 @@ import reactor.core.publisher.Flux;
 @RestController
 public class CryptoDataController {
 
-    @GetMapping("/crypto/live")
+    @GetMapping(value="/crypto/live", produces = "text/event-stream")
     public Flux<ServerSentEvent<LiveCryptoDataDto>> getLiveCryptoData() {
         return Flux.interval(Duration.ofSeconds(1))
             .map(interval -> ServerSentEvent.<LiveCryptoDataDto>builder()
                 .id(String.valueOf(interval))
                 .data(LiveCryptoDataDto.builder()
-                    .code("sample")
-                    .name("테스트 코인")
+                    .name("test coin")
                     .currentPrice(interval.doubleValue())
                     .createdAt(Instant.now().getEpochSecond())
                     .build())
