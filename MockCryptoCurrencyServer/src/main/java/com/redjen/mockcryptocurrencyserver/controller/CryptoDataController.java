@@ -30,7 +30,7 @@ public class CryptoDataController {
                 .data(LiveCryptoDataDto.builder()
                     .code("TST")
                     .currentPrice(randomService.getNextRandomValue())
-                    .createdAt(Instant.now().getEpochSecond())
+                    .createdAt(Instant.now().toEpochMilli())
                     .build())
                 .build()
             );

@@ -1,11 +1,11 @@
 export class CryptoLiveInfo {
-    constructor(code: string, currentPrice: Number, createdAt: Number) {
-        this.code = code;
-        this.currentPrice = currentPrice;
-        this.createdAt = createdAt;
+    constructor(t?: any) {
+        this.code = t.code;
+        this.currentPrice = t.currentPrice;
+        this.createdAt = new Date(parseInt(t.createdAt));
     }
 
-    code: string;
-    currentPrice: Number;
-    createdAt: Number;   
+    code!: string;
+    currentPrice!: number;
+    createdAt!: Date;
 }
