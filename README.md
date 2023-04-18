@@ -4,7 +4,7 @@ Mock Crypto Currency Market Webpage, Using Spring Webflux + Angular.
 ## Getting Started
 ### FE
 `npm install` to install necessary packages
-`ng start` to start local server
+`ng serve` to start local server for test purposes
 
 ### BE
 Spring server works on localhost:8080 env.
